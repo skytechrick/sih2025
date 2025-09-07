@@ -8,7 +8,6 @@ Original file is located at
 """
 
 import pandas as pd
-import json
 from datetime import datetime
 
 # Corrected API response data

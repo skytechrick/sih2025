@@ -68,7 +68,7 @@ apiRouter.post("/signup", async (req, res) => {
         });
     }
 
-    const newUser = { username, password };
+    const newUser = { username, password, id: Date.now() };
     usersData.push(newUser);
 
     await fs.writeFileSync(filPath, JSON.stringify(usersData, null, 2));
@@ -80,8 +80,6 @@ apiRouter.post("/signup", async (req, res) => {
         message: "User registered successfully",
         newUser
     });
-
-
 });
 
 apiRouter.post("/login", async (req, res) => {
@@ -102,7 +100,7 @@ apiRouter.post("/login", async (req, res) => {
         });
     }
 
-    const jwtToken = jwt.sign({ username: newUser.username }, process.env.JWT_SECRET, { expiresIn: '20d' });
+    const jwtToken = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '20d' });
 
     return res.json({
         success: true,
