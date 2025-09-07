@@ -1,0 +1,7 @@
+crop,price,price_unit,demand,trend
+corn,1500,per_quintal,High,Increasing
+cotton,5800,per_quintal,Low,Stable
+rice,1800,per_quintal,High,Increasing
+soybean,3200,per_quintal,Medium,Decreasing
+sugarcane,2800,per_ton,High,Increasing
+wheat,2100,per_quintal,Medium,Stable

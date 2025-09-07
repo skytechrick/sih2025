@@ -1,0 +1,2 @@
+temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,soil_temperature_0cm,soil_moisture_0_1cm,water_stress_index,growing_degree_days,timestamp
+30.6,79,0.1,6.3,32.4,0.4,1,135.15,2025-09-07T16:06:56.807176

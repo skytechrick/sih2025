@@ -1,0 +1,2 @@
+current_precipitation,current_relative_humidity_2m,current_soil_moisture_0_1cm,current_soil_temperature_0cm,current_temperature_2m,current_wind_speed_10m,growing_degree_days,water_stress_index,data_quality_score,timestamp
+0.1,79,0.4,32.4,30.6,6.3,135.15,1,0.6,2025-09-07T16:06:56.807176

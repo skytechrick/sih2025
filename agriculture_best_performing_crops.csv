@@ -1,0 +1,4 @@
+crop,price,price_unit,demand,trend
+sugarcane,2800,per_ton,High,Increasing
+corn,1500,per_quintal,High,Increasing
+rice,1800,per_quintal,High,Increasing
