@@ -631,11 +631,3 @@ df_insights = df.apply(get_agri_insights, axis=1)
 df_final = pd.concat([df, df_insights], axis=1)
 
 print(df_final.head())
-
-# import requests
-
-
-
-
-
-
