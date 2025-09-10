@@ -7,6 +7,7 @@ import FormData from "form-data";
 import { handleFileUpload } from "../middlewares/upload.js";
 import multer from "multer";
 import httpProxy from "http-proxy";
+import { getFarmInsight } from "./aiDescriptive.js";
 
 const { createProxyServer } = httpProxy;
 const proxy = createProxyServer({});
@@ -317,6 +318,10 @@ apiRouter.post("/all-model", authMiddleware, async (req, res) => {
             laborData,
             fertData,
         }
+
+        const aiInputForDescriptive = await getFarmInsight(req.body, data);
+
+        data = aiInputForDescriptive;
 
     } catch (error) {
         console.log(error);
