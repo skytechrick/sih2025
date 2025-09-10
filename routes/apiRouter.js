@@ -111,17 +111,21 @@ apiRouter.post("/login", async (req, res) => {
     });
 });
 
-apiRouter.post("/model", authMiddleware, async (req, res) => {
-    const { lat, lng } = req.body;
-    console.log(lat, lng);
+apiRouter.post("/fert-model", authMiddleware, async (req, res) => {
+
     let data = null;
     try {
 
-        // const response = await fetch({})
-        // data = await response.json();
+        const response = await fetch("http://localhost:8000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+        })
+        data = await response.json();
 
     } catch (error) {
-        console.error("Error fetching data from AI model:", error);
         return res.status(500).json({
             success: false,
             status: "error",
@@ -134,8 +138,8 @@ apiRouter.post("/model", authMiddleware, async (req, res) => {
         success: true,
         status: "success",
         statusCode: 200,
-        message: "AI endpoint hit successfully"
-        // response,
+        message: "AI endpoint hit successfully",
+        data,
     });
 });
 

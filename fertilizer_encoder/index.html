@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fertilizer Prediction API Demo</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            color: #2c5aa0; 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .card { 
+            border: 1px solid #ddd; 
+            padding: 25px; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+            background: #fafafa; 
+        }
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+            color: #333; 
+        }
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            padding: 12px 20px; 
+            background: #2c5aa0; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-top: 10px; 
+        }
+        button:hover { 
+            background: #1e3d72; 
+        }
+        .result { 
+            background: #e8f4f8; 
+            padding: 20px; 
+            border-radius: 6px; 
+            margin-top: 20px; 
+            border-left: 4px solid #2c5aa0; 
+        }
+        .success { 
+            color: #28a745; 
+            font-weight: bold; 
+        }
+        .error { 
+            color: #dc3545; 
+            font-weight: bold; 
+        }
+        .loading { 
+            color: #ffc107; 
+            font-style: italic; 
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .col {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Fertilizer Prediction API</h1>
+        
+        <div class="card">
+            <h2>📊 Input Parameters</h2>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="temperature">Temperature (°C)</label>
+                        <input type="number" id="temperature" value="32" step="0.1" min="-10" max="50">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="humidity">Humidity (%)</label>
+                        <input type="number" id="humidity" value="51" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="moisture">Moisture (%)</label>
+                        <input type="number" id="moisture" value="41" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="soil_type">Soil Type</label>
+                        <select id="soil_type">
+                            <option value="Black">Black</option>
+                            <option value="Clay">Clay</option>
+                            <option value="Loamy">Loamy</option>
+                            <option value="Red" selected>Red</option>
+                            <option value="Sandy">Sandy</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="crop_type">Crop Type</label>
+                        <select id="crop_type">
+                            <option value="Cotton">Cotton</option>
+                            <option value="Ground Nuts" selected>Ground Nuts</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Pulses">Pulses</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Wheat">Wheat</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="nitrogen">Nitrogen Content</label>
+                        <input type="number" id="nitrogen" value="7" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="potassium">Potassium Content</label>
+                        <input type="number" id="potassium" value="3" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="phosphorous">Phosphorous Content</label>
+                        <input type="number" id="phosphorous" value="19" step="0.1" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="getPrediction()">🌱 Get Fertilizer Recommendation</button>
+        </div>
+
+        <div class="card">
+            <h2>📋 API Response</h2>
+            <div id="apiResponse" class="result">
+                <p class="loading">Fill the form and click "Get Recommendation" to see results...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚡ Quick Test Buttons</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="loadExample(1)" style="background: #28a745;">Example 1: Ground Nuts</button>
+                <button onclick="loadExample(2)" style="background: #17a2b8;">Example 2: Cotton</button>
+                <button onclick="loadExample(3)" style="background: #6f42c1;">Example 3: Sugarcane</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        // Example data sets
+        const examples = {
+            1: {
+                temperature: 32,
+                humidity: 51,
+                moisture: 41,
+                soil_type: "Red",
+                crop_type: "Ground Nuts",
+                nitrogen: 7,
+                potassium: 3,
+                phosphorous: 19
+            },
+            2: {
+                temperature: 35,
+                humidity: 58,
+                moisture: 35,
+                soil_type: "Black",
+                crop_type: "Cotton",
+                nitrogen: 4,
+                potassium: 14,
+                phosphorous: 16
+            },
+            3: {
+                temperature: 27,
+                humidity: 55,
+                moisture: 43,
+                soil_type: "Sandy",
+                crop_type: "Sugarcane",
+                nitrogen: 28,
+                potassium: 0,
+                phosphorous: 17
+            }
+        };
+
+        function loadExample(exampleId) {
+            const example = examples[exampleId];
+            document.getElementById('temperature').value = example.temperature;
+            document.getElementById('humidity').value = example.humidity;
+            document.getElementById('moisture').value = example.moisture;
+            document.getElementById('soil_type').value = example.soil_type;
+            document.getElementById('crop_type').value = example.crop_type;
+            document.getElementById('nitrogen').value = example.nitrogen;
+            document.getElementById('potassium').value = example.potassium;
+            document.getElementById('phosphorous').value = example.phosphorous;
+            
+            document.getElementById('apiResponse').innerHTML = 
+                `<p class="success">Example ${exampleId} loaded! Click "Get Recommendation" to see results.</p>`;
+        }
+
+        async function getPrediction() {
+            // Get input values
+            const data = {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                moisture: parseFloat(document.getElementById('moisture').value),
+                soil_type: document.getElementById('soil_type').value,
+                crop_type: document.getElementById('crop_type').value,
+                nitrogen: parseFloat(document.getElementById('nitrogen').value),
+                potassium: parseFloat(document.getElementById('potassium').value),
+                phosphorous: parseFloat(document.getElementById('phosphorous').value)
+            };
+
+            // Validate inputs
+            if (Object.values(data).some(val => val === null || val === undefined || isNaN(val))) {
+                document.getElementById('apiResponse').innerHTML = 
+                    `<p class="error">❌ Please fill all fields with valid numbers!</p>`;
+                return;
+            }
+
+            // Show loading
+            document.getElementById('apiResponse').innerHTML = 
+                `<p class="loading">⏳ Getting fertilizer recommendation...</p>`;
+
+            try {
+                const response = await fetch(API_BASE + '/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Format the response
+                let html = `
+                    <div class="success">
+                        <h3>✅ Recommendation Ready!</h3>
+                        <p><strong>🌱 Recommended Fertilizer:</strong> ${result.recommended_fertilizer}</p>
+                        <p><strong>🎯 Confidence:</strong> ${(result.confidence * 100).toFixed(1)}%</p>
+                    </div>
+                `;
+
+                if (result.alternatives && result.alternatives.length > 0) {
+                    html += `
+                        <div style="margin-top: 20px;">
+                            <h4>🔄 Alternative Options:</h4>
+                            <ul>
+                    `;
+                    result.alternatives.forEach(alt => {
+                        html += `<li>${alt.fertilizer} (${(alt.confidence * 100).toFixed(1)}% confidence)</li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+
+                // Show input summary
+                html += `
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
+                        <h4>📊 Your Input Summary:</h4>
+                        <p><strong>Temperature:</strong> ${data.temperature}°C</p>
+                        <p><strong>Humidity:</strong> ${data.humidity}%</p>
+                        <p><strong>Moisture:</strong> ${data.moisture}%</p>
+                        <p><strong>Soil Type:</strong> ${data.soil_type}</p>
+                        <p><strong>Crop Type:</strong> ${data.crop_type}</p>
+                        <p><strong>Nutrients:</strong> N=${data.nitrogen}, K=${data.potassium}, P=${data.phosphorous}</p>
+                    </div>
+                `;
+
+                document.getElementById('apiResponse').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('apiResponse').innerHTML = 
+                    `<p class="error">❌ Error: ${error.message}</p>
+                     <p>Make sure the server is running at ${API_BASE}</p>`;
+            }
+        }
+
+        // Add enter key support
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                getPrediction();
+            }
+        });
+    </script>
+</body>
+</html>
