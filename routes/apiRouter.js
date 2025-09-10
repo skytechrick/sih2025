@@ -169,4 +169,81 @@ apiRouter.post(
     }
 );
 
+
+apiRouter.post("/labor-model", authMiddleware, async (req, res) => {
+
+    let data = null;
+    try {
+
+        const response = await fetch("http://localhost:9000/calculate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+        })
+        data = await response.json();
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            status: "error",
+            statusCode: 500,
+            message: "Failed to fetch data from ML model"
+        });
+    }
+
+    return res.json({
+        success: true,
+        status: "success",
+        statusCode: 200,
+        message: "AI endpoint hit successfully",
+        data,
+    });
+
+});
+apiRouter.get("/crop-rec-model", authMiddleware, async (req, res) => {
+
+
+    let data = null;
+    try {
+        const lat = req.query.lat;
+        const lon = req.query.lon;
+        if (!lat || !lon) {
+            return res.status(400).json({
+                success: false,
+                status: "error",
+                statusCode: 400,
+                message: "Latitude and Longitude are required"
+            });
+        }
+        const response = await fetch(`http://localhost:5000/api/agricultural-insights?lat=${lat}&lon=${lon}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req.body),
+        })
+        data = await response.json();
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            status: "error",
+            statusCode: 500,
+            message: "Failed to fetch data from ML model"
+        });
+    }
+
+    return res.json({
+        success: true,
+        status: "success",
+        statusCode: 200,
+        message: "AI endpoint hit successfully",
+        data,
+    });
+
+});
+
+
 export default apiRouter;
