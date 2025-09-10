@@ -202,6 +202,7 @@ apiRouter.post("/labor-model", authMiddleware, async (req, res) => {
     });
 
 });
+
 apiRouter.get("/crop-rec-model", authMiddleware, async (req, res) => {
 
 
@@ -227,6 +228,98 @@ apiRouter.get("/crop-rec-model", authMiddleware, async (req, res) => {
         data = await response.json();
 
     } catch (error) {
+        return res.status(500).json({
+            success: false,
+            status: "error",
+            statusCode: 500,
+            message: "Failed to fetch data from ML model"
+        });
+    }
+
+    return res.json({
+        success: true,
+        status: "success",
+        statusCode: 200,
+        message: "AI endpoint hit successfully",
+        data,
+    });
+});
+
+apiRouter.post("/all-model", authMiddleware, async (req, res) => {
+
+    let data = null;
+    try {
+        const body = req.body;
+
+        const lat = body.lat;
+        const lon = body.lon;
+        const soil_type = body.soil_type;
+        const cropName = body.cropName;
+        const crop_type = body.crop_type;
+        const areaInAcres = body.areaInAcres;
+        const laborCostPerDay = body.laborCostPerDay;
+        const noOfLabors = body.noOfLabors;
+        const temperature = body.temperature;
+        const humidity = body.humidity;
+        const moisture = body.moisture;
+        const nitrogen = body.nitrogen;
+        const potassium = body.potassium;
+        const phosphorous = body.phosphorous;
+
+        const responseCropInsights = await fetch(`http://localhost:5000/api/agricultural-insights?lat=${lat}&lon=${lon}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        const cropInsightData = await responseCropInsights.json();
+
+        const responseLabor = await fetch("http://localhost:9000/calculate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                cropName: cropName,
+                areaInAcres: areaInAcres,
+                soilNutrientLevelKnown: true,
+                nutrientLevel: {
+                    nitrogen: nitrogen,
+                    phosphorus: phosphorous,
+                    potassium: potassium
+                },
+                laborCostPerDay: laborCostPerDay,
+                noOfLabors: noOfLabors,
+            }),
+        })
+        const laborData = await responseLabor.json();
+
+        const responseFert = await fetch("http://localhost:8000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                temperature: temperature,
+                humidity: humidity,
+                moisture: moisture,
+                soil_type: soil_type,
+                crop_type: crop_type,
+                nitrogen: nitrogen,
+                potassium: potassium,
+                phosphorous: phosphorous
+            }),
+        })
+        const fertData = await responseFert.json();
+
+        data = {
+            cropInsightData,
+            laborData,
+            fertData,
+        }
+
+    } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
             status: "error",
