@@ -1,12 +1,22 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import apiRouter from './routes/apiRouter.js';
+import { createProxyMiddleware } from "http-proxy-middleware";
+
 dotenv.config({
     quiet: true
 });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// app.use(
+//     "/api/soil-type-model",
+//     createProxyMiddleware({
+//         target: "http://localhost:8001/predict",
+//         changeOrigin: true,
+//     })
+// );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

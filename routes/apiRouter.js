@@ -3,6 +3,23 @@ import fs from "fs";
 import path from "path";
 const apiRouter = Router();
 import jwt from "jsonwebtoken";
+import FormData from "form-data";
+import { handleFileUpload } from "../middlewares/upload.js";
+import multer from "multer";
+import httpProxy from "http-proxy";
+
+const { createProxyServer } = httpProxy;
+const proxy = createProxyServer({});
+
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `${file.fieldname}-${Date.now()}${ext}`);
+    },
+});
+
+const upload = multer({ storage });
 
 apiRouter.get('/', (req, res) => {
     return res.json({
@@ -130,7 +147,7 @@ apiRouter.post("/fert-model", authMiddleware, async (req, res) => {
             success: false,
             status: "error",
             statusCode: 500,
-            message: "Failed to fetch data from AI model"
+            message: "Failed to fetch data from ML model"
         });
     }
 
@@ -142,5 +159,14 @@ apiRouter.post("/fert-model", authMiddleware, async (req, res) => {
         data,
     });
 });
+
+apiRouter.post(
+    "/soil-type-model",
+    authMiddleware,
+    (req, res) => {
+        req.url = "/predict";
+        proxy.web(req, res, { target: "http://127.0.0.1:8001" });
+    }
+);
 
 export default apiRouter;

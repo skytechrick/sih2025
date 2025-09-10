@@ -3,3 +3,6 @@
 .history/
 .env
 node_modules/
+
+/SoilClassification
+/data
