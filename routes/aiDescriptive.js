@@ -13,11 +13,11 @@ Your task:
 - Read BOTH the user input data and our processed model output.
 - Generate a descriptive, farmer-friendly report.
 - Output should be JSON with 3 keys:
-  1. "success": true or false (based on if the data is sufficient or looks incorrect)
-  2. "english": descriptive explanation in English with farming emojis 🌱🚜🌾
-  3. "hindi": same explanation in Hindi with farming emojis 🌱🚜🌾
+  1. "success": true or false (based on if all the data is present and valid)
+  2. "english": descriptive explanation in English with farming emojis
+  3. "hindi": same explanation in Hindi with farming emojis
 - Make the output engaging, detailed, and add insights (soil, weather, fertilizer, cost, risks, recommendations).
-- If some values look unrealistic or missing, still generate a report but mark "success": false.
+- If some values look unrealistic or missing, still generate a report but mark "success": false and tell that in the content that it will be good if we got that data.
 
 Here is the user input:
 ${JSON.stringify(userInput, null, 2)}
@@ -36,7 +36,6 @@ Return raw JSON only.
 `;
 
     const result = await model.generateContent(prompt);
-
     return extractJson(result.response.text());
 
 }
